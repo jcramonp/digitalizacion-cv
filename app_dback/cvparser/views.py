@@ -1,69 +1,49 @@
+import os
+import openai
+from dotenv import load_dotenv
 from django.http import JsonResponse
-import spacy
-import json
 from django.views.decorators.csrf import csrf_exempt
+import json
 
-# Cargar el modelo de spaCy (asegúrate de haberlo descargado previamente)
-nlp = spacy.load("es_core_news_sm")
+# Cargar clave desde .env
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @csrf_exempt
 def parse_cv(request):
-    print("Funcion parse invocada")
-    
+    print("🔍 Función parse_cv invocada")
+
     if request.method == 'POST':
         data = json.loads(request.body)
         texto = data.get('texto', '')
-        
-        print(texto)
-        print(data)
+        print("📄 Texto recibido:", texto)
 
-        # Inicializar campos
-        nombre = ""
-        correo = ""
-        telefono = ""
-        direccion = ""
-        experiencia = ""
-        educacion = ""
-        habilidades = ""
+        try:
+            client = openai.OpenAI()
 
-        # spaCy para nombre (opcional, pero limitado)
-        doc = nlp(texto)
-        for ent in doc.ents:
-            if ent.label_ == "PER":
-                nombre = ent.text
-                break
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "Sos un extractor de currículums. Devolveme los siguientes campos en formato JSON completo y valido sin explicaciones: nombre, correo, teléfono, dirección, experiencia, educación, habilidades. Responde SOLO con un JSON válido, sin explicaciones. Asegúrate de que el JSON esté correctamente cerrado con } y no esté truncado."
+                    },
+                    {
+                        "role": "user",
+                        "content": texto
+                    }
+                ],
+                max_tokens=500,
+                temperature=0.3
+            )
 
-        # Regex para los demás
-        import re
-        correo_match = re.search(r'\b[\w\.-]+@[\w\.-]+\.\w+\b', texto)
-        telefono_match = re.search(r'\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4}', texto)
-        direccion_match = re.search(r'Calle\s+\w+.*|lugar', texto, flags=re.IGNORECASE)
+            resultado = response.choices[0].message.content
+            print("✅ Resultado obtenido:", resultado)
+            return JsonResponse(json.loads(resultado))
 
+        except Exception as e:
+            print("❌ Error general:\n")
+            print(e)
+            return JsonResponse({"error": "Fallo al procesar el currículum con OpenAI"}, status=500)
 
-        correo = correo_match.group() if correo_match else ""
-        telefono = telefono_match.group() if telefono_match else ""
-        direccion = direccion_match.group() if direccion_match else ""
-
-        def extraer_seccion(texto, seccion):
-            patron = re.compile(seccion + r"\n(.*?)(?=\n[A-ZÁÉÍÓÚÑ ]{3,}|\Z)", re.DOTALL | re.IGNORECASE)
-            match = patron.search(texto)
-            return match.group(1).strip() if match else ""
-
-        experiencia = extraer_seccion(texto, "EXPERIENCIA")
-        educacion = extraer_seccion(texto, "EDUCACIÓN")
-        habilidades = extraer_seccion(texto, "HABILIDADES")
-
-        # Crear respuesta
-        response_data = {
-            "nombre": nombre,
-            "correo": correo,
-            "telefono": telefono,
-            "direccion": direccion,
-            "experiencia": experiencia,
-            "educacion": educacion,
-            "habilidades": habilidades,
-        }
-
-        return JsonResponse(response_data)
-    
     return JsonResponse({"error": "Solo se permite POST"}, status=400)

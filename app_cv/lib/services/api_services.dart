@@ -29,11 +29,29 @@ class ApiService {
 
     String nombre = data['nombre'] ?? 'No disponible';
     String correo = data['correo'] ?? 'No disponible';
-    String telefono = data['telefono'] ?? 'No disponible';
-    String direccion = data['direccion'] ?? 'No disponible';
-    String experiencia = data['experiencia'] ?? 'No disponible';
-    String educacion = data['educacion'] ?? 'No disponible';
-    String habilidades = data['habilidades'] ?? 'No disponible';
+    String telefono = data['teléfono'] ?? 'No disponible';
+    String direccion = data['dirección'] ?? 'No disponible';
+
+    String experiencia =
+        (data['experiencia'] as List<dynamic>?)
+            ?.map(
+              (e) =>
+                  '${e['año'] ?? '-'}: ${e['puesto'] ?? '-'}\n${e['descripción'] ?? '-'}',
+            )
+            .join('\n\n') ??
+        'No disponible';
+
+    String educacion =
+        (data['educación'] as List<dynamic>?)
+            ?.map(
+              (e) =>
+                  '${e['año'] ?? '-'}: ${e['titulo'] ?? '-'}\n${e['institución'] ?? '-'}',
+            )
+            .join('\n\n') ??
+        'No disponible';
+
+    String habilidades =
+        (data['habilidades'] as List<dynamic>?)?.join(', ') ?? 'No disponible';
 
     print('Datos procesados:');
     print('Nombre: $nombre');
@@ -44,7 +62,15 @@ class ApiService {
     print('Educación: $educacion');
     print('Habilidades: $habilidades');
 
-    await handleProcessedCV(data);
+    await handleProcessedCV({
+      'nombre': nombre,
+      'correo': correo,
+      'telefono': telefono,
+      'direccion': direccion,
+      'experiencia': experiencia,
+      'educacion': educacion,
+      'habilidades': habilidades,
+    });
   }
 
   static Future<void> handleProcessedCV(Map<String, dynamic> data) async {

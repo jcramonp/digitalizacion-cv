@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 
 import 'package:smart_cv/models/cv.dart';
 import 'package:smart_cv/services/api_services.dart';
-import 'package:smart_cv/utils/cv_parser.dart';
+//import 'package:smart_cv/utils/cv_parser.dart';
 
 class OCRPage extends StatefulWidget {
   @override

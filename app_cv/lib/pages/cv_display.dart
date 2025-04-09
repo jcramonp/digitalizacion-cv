@@ -36,7 +36,12 @@ class _CVDisplayPageState extends State<CVDisplayPage> {
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
           const SizedBox(height: 4),
-          Text(value ?? 'No disponible'),
+          Text(
+            value ?? 'No disponible',
+            softWrap: true,
+            overflow: TextOverflow.visible,
+            maxLines: null,
+          ),
         ],
       ),
     );
