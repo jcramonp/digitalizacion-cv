@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/ocr_page.dart'; // Importamos la pantalla
+import 'package:smart_cv/pages/menu_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey, // <- Esto es clave
       title: 'Smart CV',
-      home: OCRPage(),
+      home: MenuPage(),
+      //OCRPage(),
     );
   }
 }

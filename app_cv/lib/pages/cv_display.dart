@@ -12,6 +12,77 @@ class CVDisplayPage extends StatefulWidget {
   State<CVDisplayPage> createState() => _CVDisplayPageState();
 }
 
+class EditableInfoBox extends StatefulWidget {
+  final String title;
+  final String? value;
+
+  const EditableInfoBox({Key? key, required this.title, required this.value})
+    : super(key: key);
+
+  @override
+  _EditableInfoBoxState createState() => _EditableInfoBoxState();
+}
+
+class _EditableInfoBoxState extends State<EditableInfoBox> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: widget.value,
+    ); // Inicializa el controlador con el valor
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Libera el controlador cuando ya no se necesite
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Aquí es donde implementamos el método build
+    return Container(
+      width: 150,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 4),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                // Si se quiere agregar lógica adicional, como enfoque
+              });
+            },
+            child: TextField(
+              controller: _controller,
+              maxLines: null,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Escribe aquí...',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _CVDisplayPageState extends State<CVDisplayPage> {
   File? _selectedImage;
 
@@ -117,19 +188,34 @@ class _CVDisplayPageState extends State<CVDisplayPage> {
                 Column(
                   children: [
                     _buildPhotoBox(),
-                    _buildInfoBox("Nombre", widget.cv.nombre),
-                    _buildInfoBox("Correo", widget.cv.correo),
-                    _buildInfoBox("Teléfono", widget.cv.telefono),
+                    EditableInfoBox(title: "Nombre", value: widget.cv.nombre),
+                    EditableInfoBox(title: "Correo", value: widget.cv.correo),
+                    EditableInfoBox(
+                      title: "Teléfono",
+                      value: widget.cv.telefono,
+                    ),
+                    EditableInfoBox(
+                      title: "Habilidades",
+                      value: widget.cv.habilidades,
+                    ),
                   ],
                 ),
                 const SizedBox(width: 12),
                 // Columna derecha
                 Column(
                   children: [
-                    _buildInfoBox("Dirección", widget.cv.direccion),
-                    _buildInfoBox("Educación", widget.cv.educacion),
-                    _buildInfoBox("Experiencia", widget.cv.experiencia),
-                    _buildInfoBox("Habilidades", widget.cv.habilidades),
+                    EditableInfoBox(
+                      title: "Dirección",
+                      value: widget.cv.direccion,
+                    ),
+                    EditableInfoBox(
+                      title: "Educación",
+                      value: widget.cv.educacion,
+                    ),
+                    EditableInfoBox(
+                      title: "Experiencia",
+                      value: widget.cv.experiencia,
+                    ),
                   ],
                 ),
               ],

@@ -26,7 +26,8 @@ def parse_cv(request):
                 messages=[
                     {
                         "role": "system",
-                        "content": "Sos un extractor de currículums. Devolveme los siguientes campos en formato JSON completo y valido sin explicaciones: nombre, correo, teléfono, dirección, experiencia, educación, habilidades. Responde SOLO con un JSON válido, sin explicaciones. Asegúrate de que el JSON esté correctamente cerrado con } y no esté truncado."
+                        "content": "Eres un extractor de currículums. Devuelveme un JSON válido y correctamente cerrado sin explicaciones. Aquí tienes la plantilla que debes usar: {\"nombre\":\"Nombre Completo\",\"correo\":\"correo@dominio.com\",\"teléfono\":\"1234567890\",\"dirección\":\"Dirección de ejemplo\",\"experiencia\":[{\"puesto\":\"Gerente\",\"descripción\":\"Descripción\",\"año\":\"2022\"}],\"educación\":[{\"titulo\":\"Licenciatura\",\"institución\":\"Universidad\",\"año\":\"2020\"}],\"habilidades\":[\"Liderazgo\",\"Comunicación\"]}. Deja como cadenas vacías la información que no encuentres"
+
                     },
                     {
                         "role": "user",

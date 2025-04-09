@@ -103,6 +103,11 @@ class _OCRPageState extends State<OCRPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20), // Espacio entre los botones
+
+              //
+              // AQUI IRIA BOTON PARA ABRIR LA CAMARA
+              //
               const SizedBox(height: 30),
               if (_recognizedText.isNotEmpty)
                 Card(
