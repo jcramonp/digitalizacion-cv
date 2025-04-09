@@ -13,11 +13,11 @@ def parse_cv(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         texto = data.get('texto', '')
+        
+        print(texto)
+        print(data)
 
-        # Procesar el texto con spaCy
-        doc = nlp(texto)
-
-        # Inicializar los campos como vacío
+        # Inicializar campos
         nombre = ""
         correo = ""
         telefono = ""
@@ -26,21 +26,34 @@ def parse_cv(request):
         educacion = ""
         habilidades = ""
 
-        # Extraer información básica
+        # spaCy para nombre (opcional, pero limitado)
+        doc = nlp(texto)
         for ent in doc.ents:
-            if ent.label_ == "PER":  # Buscar entidad "PER" para el nombre
+            if ent.label_ == "PER":
                 nombre = ent.text
-            elif ent.label_ == "EMAIL":  # Buscar entidad "EMAIL" para el correo
-                correo = ent.text
-            elif ent.label_ == "PHONE":  # Suponiendo que spaCy puede detectar teléfono
-                telefono = ent.text
-            elif ent.label_ == "ADDRESS":  # Suponiendo que spaCy puede detectar dirección
-                direccion = ent.text
-                
-            # agregar lógica para extraer experiencias, habilidades, etc. Spacy no esta diseñado para eso
-           
+                break
 
-        # Crear JSON con la información extraída (ahora con todos los campos, vacíos si no se encontraron)
+        # Regex para los demás
+        import re
+        correo_match = re.search(r'\b[\w\.-]+@[\w\.-]+\.\w+\b', texto)
+        telefono_match = re.search(r'\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4}', texto)
+        direccion_match = re.search(r'Calle\s+\w+.*|lugar', texto, flags=re.IGNORECASE)
+
+
+        correo = correo_match.group() if correo_match else ""
+        telefono = telefono_match.group() if telefono_match else ""
+        direccion = direccion_match.group() if direccion_match else ""
+
+        def extraer_seccion(texto, seccion):
+            patron = re.compile(seccion + r"\n(.*?)(?=\n[A-ZÁÉÍÓÚÑ ]{3,}|\Z)", re.DOTALL | re.IGNORECASE)
+            match = patron.search(texto)
+            return match.group(1).strip() if match else ""
+
+        experiencia = extraer_seccion(texto, "EXPERIENCIA")
+        educacion = extraer_seccion(texto, "EDUCACIÓN")
+        habilidades = extraer_seccion(texto, "HABILIDADES")
+
+        # Crear respuesta
         response_data = {
             "nombre": nombre,
             "correo": correo,
@@ -49,13 +62,8 @@ def parse_cv(request):
             "experiencia": experiencia,
             "educacion": educacion,
             "habilidades": habilidades,
-            #"mensaje": "Procesado con spaCy"
         }
 
         return JsonResponse(response_data)
     
     return JsonResponse({"error": "Solo se permite POST"}, status=400)
-
-
-
-
