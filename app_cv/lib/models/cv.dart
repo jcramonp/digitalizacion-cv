@@ -1,4 +1,4 @@
-class Cv {
+class CV {
   final String? nombre;
   final String? correo;
   final String? telefono;
@@ -7,7 +7,7 @@ class Cv {
   final String? educacion;
   final String? habilidades;
 
-  Cv({
+  CV({
     this.nombre,
     this.correo,
     this.telefono,
@@ -42,16 +42,15 @@ class Cv {
     };
   }
 
-  // Método para crear una instancia de Cv a partir de un JSON
-  factory Cv.fromJson(Map<String, dynamic> json) {
-    return Cv(
-      nombre: json['nombre'],
-      correo: json['correo'],
-      telefono: json['telefono'],
-      direccion: json['direccion'],
-      experiencia: json['experiencia'],
-      educacion: json['educacion'],
-      habilidades: json['habilidades'],
+  factory CV.fromJson(Map<String, dynamic> json) {
+    return CV(
+      nombre: json['nombre'] ?? 'No disponible',
+      correo: json['correo'] ?? 'No disponible',
+      telefono: json['telefono'] ?? 'No disponible',
+      direccion: json['direccion'] ?? 'No disponible',
+      experiencia: json['experiencia'] ?? 'No disponible',
+      educacion: json['educacion'] ?? 'No disponible',
+      habilidades: json['habilidades'] ?? 'No disponible',
     );
   }
 }

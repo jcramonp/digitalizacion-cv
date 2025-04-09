@@ -1,7 +1,7 @@
 import 'package:smart_cv/models/cv.dart';
 
 class CvParser {
-  Cv parseCVFromText(String rawText) {
+  CV parseCVFromText(String rawText) {
     final emailRegex = RegExp(r'[\w\.-]+@[\w\.-]+\.\w+');
     final phoneRegex = RegExp(
       r'(\+?\d{1,3})?[\s.-]?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}',
@@ -11,7 +11,7 @@ class CvParser {
     String? telefono = phoneRegex.firstMatch(rawText)?.group(0);
     String? nombre = _extraerNombre(rawText);
 
-    return Cv(
+    return CV(
       nombre: nombre,
       correo: correo,
       telefono: telefono,
