@@ -11,12 +11,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @csrf_exempt
 def parse_cv(request):
-    print("🔍 Función parse_cv invocada")
+    print("Función parse_cv invocada")
 
     if request.method == 'POST':
         data = json.loads(request.body)
         texto = data.get('texto', '')
-        print("📄 Texto recibido:", texto)
+        print("Texto recibido:", texto)
 
         try:
             client = openai.OpenAI()
@@ -26,7 +26,7 @@ def parse_cv(request):
                 messages=[
                     {
                         "role": "system",
-                        "content": "Eres un extractor de currículums. Devuelveme un JSON válido y correctamente cerrado sin explicaciones. Aquí tienes la plantilla que debes usar: {\"nombre\":\"Nombre Completo\",\"correo\":\"correo@dominio.com\",\"teléfono\":\"1234567890\",\"dirección\":\"Dirección de ejemplo\",\"experiencia\":[{\"puesto\":\"Gerente\",\"descripción\":\"Descripción\",\"año\":\"2022\"}],\"educación\":[{\"titulo\":\"Licenciatura\",\"institución\":\"Universidad\",\"año\":\"2020\"}],\"habilidades\":[\"Liderazgo\",\"Comunicación\"]}. Deja como cadenas vacías la información que no encuentres"
+                        "content": "Eres un extractor de currículums. Devuelveme un JSON válido y correctamente cerrado sin explicaciones. Aquí tienes ejemplo la plantilla que debes usar: {\"nombre\":\"Nombre Completo\",\"correo\":\"correo@dominio.com\",\"teléfono\":\"1234567890\",\"dirección\":\"Dirección de ejemplo\",\"experiencia\":[{\"puesto\":\"\",\"descripción\":\"Descripción\",\"año\":\"\"}],\"educación\":[{\"titulo\":\"\",\"institución\":\"\",\"año\":\"\"}],\"habilidades\":[\"\"\"\"]}. Deja como cadenas vacías la información que no encuentres, trata de autocompletar y corregir palabras, no pongas palabras o nombres que no existen, usa solo letras mayusculas, minusculas, números puntos y comas"
 
                     },
                     {
@@ -39,11 +39,11 @@ def parse_cv(request):
             )
 
             resultado = response.choices[0].message.content
-            print("✅ Resultado obtenido:", resultado)
+            print("Resultado obtenido:", resultado)
             return JsonResponse(json.loads(resultado))
 
         except Exception as e:
-            print("❌ Error general:\n")
+            print("Error general:\n")
             print(e)
             return JsonResponse({"error": "Fallo al procesar el currículum con OpenAI"}, status=500)
 
